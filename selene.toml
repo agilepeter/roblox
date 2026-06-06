@@ -1,0 +1,29 @@
+## Selene config: https://kampfkarren.github.io/selene/usage/configuration.html
+## Run via `selene src/` (after we Rojo-ify the codebase) or `selene .`
+##
+## STD library is `roblox`, which makes Selene aware of game:GetService etc.
+std = "roblox"
+
+## Lints that we want as ERRORS (fail CI).
+[lints]
+# Stylistic / dead-code: usually correctness signals in Luau
+shadowing            = "warn"
+empty_if             = "warn"
+empty_loop           = "warn"
+suspicious_reverse_loop = "warn"
+divide_by_zero       = "warn"
+incorrect_roactor_usage = "deny"
+deprecated           = "warn"
+
+# Boolean / nil
+must_use             = "warn"
+
+# Roblox-specific (turn into errors as they reveal real bugs)
+roblox_incorrect_color3_new_bounds = "deny"
+roblox_incorrect_roact_usage       = "deny"
+roblox_suspicious_udim2_new        = "deny"
+
+# Things we DON'T want to gate on (would generate too much noise in current codebase)
+global_usage   = "allow"   # we use _G.RunDiabowTests etc deliberately
+mixed_table    = "allow"
+type_check_inside_call = "allow"

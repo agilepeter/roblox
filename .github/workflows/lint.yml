@@ -1,0 +1,42 @@
+name: Lint
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+# Only the latest run per PR survives; old ones cancel.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Rokit installs Selene + StyLua at the pinned versions in rokit.toml.
+      - name: Install Rokit
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/rojo-rbx/rokit/main/scripts/install.sh | sh
+          echo "$HOME/.rokit/bin" >> $GITHUB_PATH
+
+      - name: Rokit install
+        run: rokit install --no-trust-check
+
+      # Lint targets the on-disk Lua source tree. While Diabow is still edited
+      # exclusively via Studio (binary .rbxl), there's no source tree to lint.
+      # Skip gracefully so CI stays green; activate by removing the `if` once
+      # the Rojo source-tree migration is done (see docs/testing-setup.md).
+      - name: Selene
+        if: hashFiles('src/**/*.lua', 'src/**/*.luau') != ''
+        run: selene src/
+
+      - name: StyLua
+        if: hashFiles('src/**/*.lua', 'src/**/*.luau') != ''
+        run: stylua --check src/
+
+      - name: Skip notice
+        if: hashFiles('src/**/*.lua', 'src/**/*.luau') == ''
+        run: echo "No src/ source tree yet — skipping lint. See docs/testing-setup.md to migrate."

@@ -1,0 +1,37 @@
+name: Stress benchmark
+on:
+  # Triggered only on workflow_dispatch + nightly cron — too slow for every PR.
+  workflow_dispatch:
+  schedule:
+    - cron: '0 8 * * *'  # 08:00 UTC daily
+
+jobs:
+  stress:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Publish + run
+        env:
+          ROBLOX_API_KEY: ${{ secrets.ROBLOX_API_KEY }}
+          ROBLOX_UNIVERSE_ID: ${{ secrets.ROBLOX_UNIVERSE_ID }}
+          ROBLOX_PLACE_ID: ${{ secrets.ROBLOX_CI_PLACE_ID }}
+        run: |
+          curl -fSs -X POST "https://apis.roblox.com/universes/v1/${ROBLOX_UNIVERSE_ID}/places/${ROBLOX_PLACE_ID}/versions?versionType=Saved" \
+            -H "x-api-key: ${ROBLOX_API_KEY}" \
+            -H "Content-Type: application/octet-stream" \
+            --data-binary @diablow.rbxl
+          RESPONSE=$(curl -fSs -X POST \
+            "https://apis.roblox.com/cloud/v2/universes/${ROBLOX_UNIVERSE_ID}/places/${ROBLOX_PLACE_ID}/luau-execution-session-tasks" \
+            -H "x-api-key: ${ROBLOX_API_KEY}" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "script": "return _G.RunStressBenchmark()",
+              "timeout": "120s"
+            }')
+          echo "$RESPONSE"
+          if echo "$RESPONSE" | grep -q '"success":true'; then
+            echo "Stress passed"; exit 0
+          else
+            echo "Stress threshold violated"; exit 1
+          fi

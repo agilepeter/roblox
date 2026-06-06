@@ -1,0 +1,23 @@
+# Roblox Studio
+*.rbxl.lock
+*-ci.rbxl
+*-stress.rbxl
+
+# Rokit
+.rokit/
+
+# OS
+.DS_Store
+
+# Secrets — never commit
+.env
+.env.local
+*-api-key.txt
+
+# Wally (if added later)
+Packages/
+DevPackages/
+
+# Audio working files (keep generate_audio.py + manifest, drop the .wav builds)
+audio/_temp/
+audio/*.wav.tmp

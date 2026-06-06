@@ -1,0 +1,24 @@
+## Rokit (https://github.com/rojo-rbx/rokit) is Foreman's successor — toolchain manager
+## that pins exact versions of Roblox-ecosystem CLIs. Run `rokit install` after cloning.
+##
+## To use:
+##   curl -fsSL https://raw.githubusercontent.com/rojo-rbx/rokit/main/scripts/install.sh | sh
+##   rokit install
+##
+[tools]
+# Rojo — Roblox file sync, builds .rbxl from on-disk Lua tree.
+# Required to convert diablow.rbxl → editable on-disk Lua → CI-buildable .rbxl.
+rojo = "rojo-rbx/rojo@7.4.4"
+
+# Selene — Luau-aware lint. Catches `:GetService` typos, dead code, type mismatches.
+selene = "Kampfkarren/selene@0.27.1"
+
+# StyLua — Lua formatter. Runs in CI to enforce consistent formatting.
+stylua = "JohnnyMorganz/StyLua@0.20.0"
+
+# Wally — package manager. Not strictly required yet but lets us pull Jest-Lua etc.
+wally = "UpliftGames/wally@0.3.2"
+
+# run-in-roblox — spawns a Studio process headlessly and runs a script. Local dev convenience.
+# Open Cloud Luau Execution API is the production CI path.
+run-in-roblox = "rojo-rbx/run-in-roblox@0.4.0"
