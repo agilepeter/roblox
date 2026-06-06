@@ -5,6 +5,12 @@ Each item has a one-line "why" so you can skip with intent if you must.
 
 ## Pre-push (in Studio)
 
+- [ ] **Save the place file (Ctrl+S).** The `.rbxl` on disk only updates when you
+  explicitly save. CI and git both read from disk, so unsaved Studio edits don't
+  ship. Verify the file timestamp with `stat -f "%Sm" diablow.rbxl` — it should
+  be from today, not last week.
+  Why: easy to forget; the #1 reason a "shipped" change doesn't take effect.
+
 - [ ] **Tests pass.** Press F5 → wait 5s → look for `[TestRunner] 29 passed, 0 failed`.
   Why: catches damage/shard/weapon regressions before they hit players.
 
