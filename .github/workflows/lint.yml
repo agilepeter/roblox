@@ -18,8 +18,10 @@ jobs:
 
       # Rokit installs Selene + StyLua at the pinned versions in rokit.toml.
       - name: Install Rokit
+        shell: bash
         run: |
-          curl -fsSL https://raw.githubusercontent.com/rojo-rbx/rokit/main/scripts/install.sh | sh
+          # Pipe to bash (not sh) — Ubuntu's /bin/sh is dash which lacks `set -o pipefail`
+          curl -fsSL https://raw.githubusercontent.com/rojo-rbx/rokit/main/scripts/install.sh | bash
           echo "$HOME/.rokit/bin" >> $GITHUB_PATH
 
       - name: Rokit install

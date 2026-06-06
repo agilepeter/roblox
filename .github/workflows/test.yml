@@ -15,10 +15,29 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Detect whether Roblox secrets are present. If not, skip the Open Cloud
+      # steps with a green "skipped" status instead of a red 404. Set the three
+      # secrets at github.com/agilepeter/roblox/settings/secrets/actions to
+      # activate the real CI path.
+      - name: Check Roblox secrets
+        id: check
+        env:
+          ROBLOX_API_KEY: ${{ secrets.ROBLOX_API_KEY }}
+          ROBLOX_UNIVERSE_ID: ${{ secrets.ROBLOX_UNIVERSE_ID }}
+          ROBLOX_PLACE_ID: ${{ secrets.ROBLOX_CI_PLACE_ID }}
+        run: |
+          if [ -z "$ROBLOX_API_KEY" ] || [ -z "$ROBLOX_UNIVERSE_ID" ] || [ -z "$ROBLOX_PLACE_ID" ]; then
+            echo "secrets_set=false" >> $GITHUB_OUTPUT
+            echo "::warning::Roblox secrets not set — skipping Open Cloud test run. See docs/testing-setup.md."
+          else
+            echo "secrets_set=true" >> $GITHUB_OUTPUT
+          fi
+
       # v1 CI path: ship the committed .rbxl directly to Open Cloud.
       # No Rojo build step yet — that requires source-tree migration first.
       # See docs/testing-setup.md "Option A vs B" for the upgrade path.
       - name: Publish committed .rbxl to Open Cloud
+        if: steps.check.outputs.secrets_set == 'true'
         env:
           ROBLOX_API_KEY: ${{ secrets.ROBLOX_API_KEY }}
           ROBLOX_UNIVERSE_ID: ${{ secrets.ROBLOX_UNIVERSE_ID }}
@@ -33,6 +52,7 @@ jobs:
       # Uses the Luau Execution API. The session blocks until script returns or
       # times out (default 30s; pass `executionTimeoutSeconds` to extend).
       - name: Run Diabow tests via Open Cloud
+        if: steps.check.outputs.secrets_set == 'true'
         env:
           ROBLOX_API_KEY: ${{ secrets.ROBLOX_API_KEY }}
           ROBLOX_UNIVERSE_ID: ${{ secrets.ROBLOX_UNIVERSE_ID }}
