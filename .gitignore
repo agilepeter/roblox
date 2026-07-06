@@ -21,3 +21,10 @@ DevPackages/
 # Audio working files (keep generate_audio.py + manifest, drop the .wav builds)
 audio/_temp/
 audio/*.wav.tmp
+
+# Heavy media — regenerable audio builds + video content (intro/outro), not game
+# source. Keep repo lean; back these up to R2/media store, not git. (sweep 2026-07-05)
+*.mp4
+*.mp3
+*.wav
+/screenshots/
