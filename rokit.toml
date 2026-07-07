@@ -21,4 +21,5 @@ wally = "UpliftGames/wally@0.3.2"
 
 # run-in-roblox — spawns a Studio process headlessly and runs a script. Local dev convenience.
 # Open Cloud Luau Execution API is the production CI path.
-run-in-roblox = "rojo-rbx/run-in-roblox@0.4.0"
+# NOTE: 0.3.0 is the latest release upstream ever cut (no 0.4.0 exists) — pinning higher 404s rokit.
+run-in-roblox = "rojo-rbx/run-in-roblox@0.3.0"
